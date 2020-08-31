@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/icons": "^4.2.2",
     "@zeit/next-css": "^1.0.1",
     "antd": "^4.5.4",
     "axios": "^0.20.0",
