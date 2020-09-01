@@ -1,10 +1,14 @@
 import { useState, useCallback } from 'react'
-
-import Link from 'next/link'
-import { Layout, Input, Avatar } from 'antd'
+import getConfig from 'next/config'
+import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from 'antd'
 import { GithubOutlined, UserOutlined } from '@ant-design/icons'
+import { connect } from 'react-redux'
+
+import Container from './Container'
 
 const { Header, Content, Footer } = Layout
+
+const { publicRuntimeConfig } = getConfig()
 
 const githubIconStyle = {
   color: 'white',
@@ -18,8 +22,15 @@ const footerStyle = {
   textAlign: 'center'
 }
 
-export default ({ children }) => {
-  
+const userDropDown = (
+  <Menu>
+    <Menu.Item>
+      <a href="javascript:void(0)">Log out</a>
+    </Menu.Item>
+  </Menu>
+)
+
+const MyLayout = ({ children, user }) => {  
   const [search, setSearch] = useState('')
 
   const handleSearchChange = useCallback(e => {
@@ -31,7 +42,7 @@ export default ({ children }) => {
   return (
     <Layout>
       <Header>
-        <div className="header-inner">
+        <Container renderer={<div className="header-inner" />}>
           <div className="header-left">
             <div className="logo">
               <GithubOutlined style={githubIconStyle}/>
@@ -47,17 +58,36 @@ export default ({ children }) => {
           </div>
           <div className="header-right">
             <div className="user">
-              <Avatar size={40} icon={<UserOutlined />}/>
+              {
+                user && user.id ? (
+                  <Dropdown overlay={userDropDown}>
+                    <a href="/">
+                      <Avatar size={40} src={user.avatar_url} />
+                    </a>
+                  </Dropdown>
+                ) : (
+                  <Tooltip title="Click to login">
+                    <a href={publicRuntimeConfig.OAUTH_URL}>
+                      <Avatar size={40} icon={<UserOutlined />}/>
+                    </a>
+                  </Tooltip>
+                )
+              }
             </div>
           </div>
-        </div>
+        </Container>
       </Header>
-      <Content>{children}</Content>
+      <Content>
+        <Container>{children}</Container>
+      </Content>
       <Footer style={footerStyle}>
         Develop by Yuhao Zhang <a href="mailto:yuh.zhang@outlook.com">yuh.zhang@outlook.com</a>
       </Footer>
 
       <style jsx>{`
+        .content {
+          color: red;
+        }
         .header-inner {
           display: flex;
           justify-content: space-between;
@@ -72,7 +102,19 @@ export default ({ children }) => {
         #__next, .ant-layout {
           height: 100%
         }
+        .ant-layout-header {
+          padding-left: 0;
+          padding-right: 0;
+        }
       `}</style>
     </Layout>
   )
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  }
+}
+
+export default connect(mapStateToProps, null)(MyLayout)

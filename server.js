@@ -26,16 +26,7 @@ app.prepare().then(() => {
 
   server.use(session(SESSION_CONFIG, server))
 
-  //配置处理github OAuth登录
   auth(server)
-
-  // server.use(async (ctx) => {
-  //   if (ctx.cookies.get('jid')) {
-  //     ctx.session = {}
-  //   }
-  //   await next()
-
-  // })
 
   router.get('/api/user/info', async (ctx) => {
     const user = ctx.session.userInfo
@@ -69,7 +60,7 @@ app.prepare().then(() => {
   server.use(router.routes())
 
   server.use(async (ctx, next) =>{
-    // ctx.cookies.set('id', 'userid: xxxxx')
+    ctx.req.session = ctx.session
     await handle(ctx.req, ctx.res)
     ctx.respond = false
   })
