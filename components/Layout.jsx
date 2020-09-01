@@ -1,10 +1,14 @@
 import { useState, useCallback } from 'react'
 import getConfig from 'next/config'
+import { connect } from 'react-redux'
+import axios from 'axios'
+import { withRouter } from 'next/router'
+
 import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from 'antd'
 import { GithubOutlined, UserOutlined } from '@ant-design/icons'
-import { connect } from 'react-redux'
 
 import Container from './Container'
+import { logout } from '../store/store'
 
 const { Header, Content, Footer } = Layout
 
@@ -22,15 +26,7 @@ const footerStyle = {
   textAlign: 'center'
 }
 
-const userDropDown = (
-  <Menu>
-    <Menu.Item>
-      <a href="javascript:void(0)">Log out</a>
-    </Menu.Item>
-  </Menu>
-)
-
-const MyLayout = ({ children, user }) => {  
+const MyLayout = ({ children, user, logout, router }) => {  
   const [search, setSearch] = useState('')
 
   const handleSearchChange = useCallback(e => {
@@ -38,6 +34,32 @@ const MyLayout = ({ children, user }) => {
   }, [])
 
   const handleOnSearch = useCallback(() => {}, [])
+
+  const handleLogout = useCallback(() => {
+    logout()
+  }, [logout])
+  
+  const handleGotoOAuth = useCallback(e => {
+    e.preventDefault()
+    axios.get(`/prepare-auth?url=${router.asPath}`)
+      .then(res => {
+        if (res.status === 200) {
+          location.href = publicRuntimeConfig.OAUTH_URL
+        } else {
+          console.log('prepare auth failed', res)
+        }
+      }).catch(err => {
+        console.log('prepare auth error', err)
+      })
+  }, [])
+
+  const userDropDown = (
+    <Menu>
+      <Menu.Item>
+        <a onClick={handleLogout}>Logout</a>
+      </Menu.Item>
+    </Menu>
+  )
 
   return (
     <Layout>
@@ -67,7 +89,7 @@ const MyLayout = ({ children, user }) => {
                   </Dropdown>
                 ) : (
                   <Tooltip title="Click to login">
-                    <a href={publicRuntimeConfig.OAUTH_URL}>
+                    <a href={`/prepare-auth?url=${router.asPath}`}>
                       <Avatar size={40} icon={<UserOutlined />}/>
                     </a>
                   </Tooltip>
@@ -111,10 +133,16 @@ const MyLayout = ({ children, user }) => {
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     user: state.user
   }
 }
 
-export default connect(mapStateToProps, null)(MyLayout)
+const mapDispatchToProps = dispatch => {
+  return {
+    logout: () => dispatch(logout())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(MyLayout))
