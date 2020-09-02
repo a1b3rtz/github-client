@@ -12,8 +12,6 @@ module.exports = (server) => {
       const token = githubAuth && githubAuth.access_token
       let headers = {}
       if (token) {
-        console.log('token_type', githubAuth.token_type)
-        console.log('githubAuth', githubAuth)
         headers['Authorization'] = `${githubAuth.token_type} ${token}`
       }
 
