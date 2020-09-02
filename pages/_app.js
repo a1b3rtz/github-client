@@ -7,6 +7,7 @@ import withReduxComp from '../lib/with-redux'
 import PageLoading from '../components/PageLoading'
 import Router from 'next/router'
 import Link from 'next/link'
+import axios from 'axios'
 
 class MyApp extends App {
   state = {  
@@ -30,6 +31,10 @@ class MyApp extends App {
     Router.events.on('routeChangeStart', this.startLoading)
     Router.events.on('routeChangeComplete', this.stopLoading)
     Router.events.on('routeChangeError', this.stopLoading)
+
+    axios.get('/github/search/repositories?q=react')
+      .then(res => console.log(res))
+
   }
 
   componentWillUnmount() {
