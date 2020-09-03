@@ -5,6 +5,7 @@ const next = require('next')
 const session = require('koa-session')
 const auth = require('./server/auth')
 const api = require('./server/api')
+const koaBody = require('koa-body')
 
 const RedisSessionStore = require('./server/session-store')
 
@@ -24,6 +25,8 @@ app.prepare().then(() => {
     key: 'jid',
     store: new RedisSessionStore(redis)
   }
+
+  server.use(koaBody())
 
   server.use(session(SESSION_CONFIG, server))
 
