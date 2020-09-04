@@ -78,14 +78,10 @@ const Index = ({ userRepos, userStarredRepos, user, router, isLogin }) => {
       <div className="user-repos">
         <Tabs onChange={handleTabChange} defaultActiveKey={tapKey}>
           <Tabs.TabPane tab="Your Repositories" key="1">
-            {
-              userRepos.map(repo => <Repo key={repo.id} repo={repo} />)
-            }
+            {userRepos.map(repo => <Repo key={repo.id} repo={repo} />)}
           </Tabs.TabPane>
           <Tabs.TabPane tab="Your Stars" key="2">
-            {
-              userStarredRepos.map(repo => <Repo key={repo.id} repo={repo} />)
-            }
+            {userStarredRepos.map(repo => <Repo key={repo.id} repo={repo} />)}
           </Tabs.TabPane>
         </Tabs>
       </div>
