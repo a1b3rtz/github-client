@@ -1,14 +1,48 @@
+import { useEffect } from 'react'
 import { request } from '../lib/api'
-import { Button } from 'antd'
+import { Button, Tabs } from 'antd'
 import { MailOutlined } from '@ant-design/icons'
 import getConfig from 'next/config'
 import { connect } from 'react-redux'
+import Router, { withRouter } from 'next/router'
+import LRU from 'lru-cache'
 
 import Repo from '../components/Repo'
 
+// const cache = new LRU({
+//   maxAge: 1000 * 60 * 10
+// })
+
 const { publicRuntimeConfig } = getConfig()
 
-const Index = ({ userRepos, userStarredRepos, user }) => {
+let cachedUserRepos, cachedUserStartedRepos
+
+const isServer = typeof window === 'undefined'
+
+const Index = ({ userRepos, userStarredRepos, user, router, isLogin }) => {
+
+  const tapKey = router.query.key || '1'
+
+  const handleTabChange = (activeKey) => {
+    Router.push(`/?key=${activeKey}`)
+  }
+
+  useEffect(() => {
+    if (!isServer) {
+      cachedUserRepos = userRepos
+      cachedUserStartedRepos = userStarredRepos
+      // if (userRepos) {
+      //   cache.set('userRepos', userRepos)
+      // }
+      // if (userStarredRepos) {
+      //   cache.set('userStarredRepos', userStarredRepos)
+      // }
+      const timeout = setTimeout(() => {
+        cachedUserRepos = null
+        cachedUserStartedRepos = null
+      }, 1000 * 60 * 10);
+    }
+  }, [cachedUserRepos, cachedUserStartedRepos])
   
   if (!user || !user.id) {
     return (
@@ -42,9 +76,18 @@ const Index = ({ userRepos, userStarredRepos, user }) => {
         ) : null}
       </div>
       <div className="user-repos">
-        {
-          userRepos.map(repo => <Repo repo={repo} />)
-        }
+        <Tabs onChange={handleTabChange} defaultActiveKey={tapKey}>
+          <Tabs.TabPane tab="Your Repositories" key="1">
+            {
+              userRepos.map(repo => <Repo key={repo.id} repo={repo} />)
+            }
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Your Stars" key="2">
+            {
+              userStarredRepos.map(repo => <Repo key={repo.id} repo={repo} />)
+            }
+          </Tabs.TabPane>
+        </Tabs>
       </div>
 
       <style jsx>{`
@@ -94,6 +137,22 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
     }
   }
 
+  if (!isServer) {
+    // if (cache.get('userRepos') && cache.get('userStarredRepos')) {
+    //   return {
+    //     userRepos: cache.get('userRepos'),
+    //     userStarredRepos: cache.get('userStarredRepos')
+    //   }
+    // }
+
+    if (cachedUserRepos && cachedUserStartedRepos) {
+      return {
+        userRepos: cachedUserRepos,
+        userStarredRepos: cachedUserStartedRepos
+      }
+    }
+  }
+
   const userRepos = await request(
     { 
       url: '/user/repos',
@@ -123,4 +182,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, null)(Index)
+export default withRouter(connect(mapStateToProps, null)(Index))
