@@ -1,8 +1,6 @@
 import { useState, useCallback } from 'react'
-import getConfig from 'next/config'
 import { connect } from 'react-redux'
-import axios from 'axios'
-import { withRouter, Router } from 'next/router'
+import { withRouter } from 'next/router'
 import Link from 'next/link'
 
 import { Layout, Input, Avatar, Tooltip, Dropdown, Menu } from 'antd'
@@ -12,8 +10,6 @@ import Container from './Container'
 import { logout } from '../store/store'
 
 const { Header, Content, Footer } = Layout
-
-const { publicRuntimeConfig } = getConfig()
 
 const githubIconStyle = {
   color: 'white',
@@ -41,21 +37,8 @@ const MyLayout = ({ children, user, logout, router }) => {
 
   const handleLogout = useCallback(() => {
     logout()
+    router.push('/')
   }, [logout])
-  
-  const handleGotoOAuth = useCallback(e => {
-    e.preventDefault()
-    axios.get(`/prepare-auth?url=${router.asPath}`)
-      .then(res => {
-        if (res.status === 200) {
-          location.href = publicRuntimeConfig.OAUTH_URL
-        } else {
-          console.log('prepare auth failed', res)
-        }
-      }).catch(err => {
-        console.log('prepare auth error', err)
-      })
-  }, [])
 
   const userDropDown = (
     <Menu>
