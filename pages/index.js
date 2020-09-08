@@ -14,7 +14,7 @@ import { cacheArray } from '../lib/repo-basic-cache'
 //   maxAge: 1000 * 60 * 10
 // })
 
-const { publicRuntimeConfig } = getConfig()
+const { serverRuntimeConfig } = getConfig()
 
 let cachedUserRepos, cachedUserStartedRepos
 
@@ -56,7 +56,7 @@ const Index = ({ userRepos, userStarredRepos, user, router, isLogin }) => {
     return (
       <div className="root">
         <p>You haven't login yet</p>
-        <Button type="primary" href={publicRuntimeConfig.OAUTH_URL}>Login</Button>
+        <Button type="primary" href={serverRuntimeConfig.OAUTH_URL}>Login</Button>
         <style jsx>{`
           .root {
             height: 400px;
