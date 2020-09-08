@@ -15,7 +15,7 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 //create redis client
-const redis = new Redis()
+const redis = new Redis(process.env.REDIS_URL)
 
 //set nodejs globally has a function called atob
 global.atob = atob
