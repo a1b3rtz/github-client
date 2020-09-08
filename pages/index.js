@@ -56,7 +56,7 @@ const Index = ({ userRepos, userStarredRepos, user, router, isLogin }) => {
     return (
       <div className="root">
         <p>You haven't login yet</p>
-        <Button type="primary" href={serverRuntimeConfig.OAUTH_URL}>Login</Button>
+        <Button type="primary" href="/prepare-auth?url=/">Login</Button>
         <style jsx>{`
           .root {
             height: 400px;
