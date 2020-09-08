@@ -12,9 +12,17 @@ const MDRenderer = dynamic(() => import('../../components/MarkdownRender'),
 )
 
 const Detail = ({ readme }) => {
-  return (
-    <MDRenderer content={readme.content} isBase64={true} />
-  )
+  if (readme !== 'no data') {
+    return (
+      <MDRenderer content={readme.content} isBase64={true} />
+    )
+  } else {
+    return (
+      <div>
+        <span>No readme file found.</span>
+      </div>
+    )
+  }
 }
 
 Detail.getInitialProps = async ({ ctx: { query: { owner, name }, req, res}}) => {
