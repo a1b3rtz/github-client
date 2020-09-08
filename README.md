@@ -70,7 +70,7 @@ yuhao.zhang@outlook.com
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: www.linkedin.com/in/yuhao-zhang-fullstack
+[linkedin-url]: https://www.linkedin.com/in/yuhao-zhang-fullstack
 [product-screenshot]: images/screenshot.png
 [login-screenshot]: readmeImage/login.gif
 [search-screenshot]: readmeImage/search.gif
